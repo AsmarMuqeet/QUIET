@@ -1,28 +1,38 @@
-import requests
-import json
-import util as U
+import qiskit.qasm3 as QASM
 
-circuits = U.load_training_circuits()
-qasm_circuit = U.qasm2.dumps(circuits[0])
-use_simulator = True
-use_job_id = None
+qc = QuantumCircuit()
+qc_str = QASM.dumps(qc)
 
-# Define the URL of the server
-url = 'http://localhost:8085/filter'
+payload = {"circuit": qc_str}
+json_data = json.dumps(payload)
+response = requests.post('http://localhost:8085/featuresSampler', data=json_data, headers={'Content-Type': 'application/json'})
 
-# Define the data to send in the POST request
-data = {
-    "qasm_circuit": qasm_circuit,
-    "use_simulator": use_simulator,
-    "use_job_id": use_job_id
-}
+if response.status_code==200:
+    features = response.json()
 
-# Convert the data to JSON format
-json_data = json.dumps(data)
+    circuits_to_execute = [features["Dp1"],features["Dp2"],features["Dp3"],features["O1"],features["O2"]]
+    """
+    Backend specific circuit execution logic goes here.
+    For example using QUIET's own execution api, based on AER simulator and a 14 qubit noise model
+    
+    payload = {"circuit": circuits_to_execute}
+    json_data = json.dumps(payload)
+    response = requests.post('http://localhost:8085/executeSamplerNoisyList', data=json_data, headers={'Content-Type': 'application/json'})
+    if response.status_code==200:
+        circuit_executions = response.json()
+        features["Dp1"] = circuit_executions[0]
+        features["Dp2"] = circuit_executions[1]
+        features["Dp3"] = circuit_executions[2]
+        features["O1"] = circuit_executions[3]
+        features["O2"] = circuit_executions[4]
+    
+    """
+    
 
-# Send the POST request
-response = requests.post(url, data=json_data, headers={'Content-Type': 'application/json'})
-
-# Print the response from the server
-print('Status Code:', response.status_code)
-print('Response Body:', response.json())
+    payload = features                 # after adding circuit execution results
+    json_data = json.dumps(payload)
+    response = requests.post('http://localhost:8085/filterSampler', data=json_data, headers={'Content-Type': 'application/json'})
+    if response.status_code==200:
+        filter_probs = response.json()
+        
+        print(f"Mitigated Probs: {filter_probs}")

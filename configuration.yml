@@ -1,7 +1,2 @@
-IBM_CHANNEL: "valid options are" ibm_quantum or ibm_cloud
-QISKIT_TOKEN: IBM API token
-IBM_COMPUTER: ibm_sherbrooke
-SHOTS: 1024
-TRAINING_CIRCUIT_DIR: absolute path for example C:\DATA\QUIET\training_circuits
-TRAINING_DATA_DIR: absolute path for example C:\DATA\QUIET\data
-MODEL_SAVE: absolute path for example C:\DATA\QUIET\model\ML.model
+TRAINING_DATA_DIR: C:\DATA\QUIET\training_data\training_data.csv
+MODEL_NAME: sherbrooke
