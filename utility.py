@@ -329,7 +329,6 @@ def data_generation():
         columns=["width", "depth", "gate_counts_1q", "gate_counts_2q", "Dp1", "Dp2", "Dp3", "POS", "POF", "ODR"])
 
     for file in tqdm(os.listdir(os.path.join(os.getcwd(),"training_circuits"))):
-        print(file)
         qc = QuantumCircuit.from_qasm_file(os.path.join(os.getcwd(),f"training_circuits/{file}"))
         circ_str = QASM.dumps(qc)
         features = get_features_sampler(circ_str)
